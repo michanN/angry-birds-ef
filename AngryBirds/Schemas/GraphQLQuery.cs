@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-namespace AngryBirds.API.Models
+namespace AngryBirds.API.Schemas
 {
     public class GraphQLQuery
     {

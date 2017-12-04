@@ -45,6 +45,7 @@ namespace AngryBirds.DATA.Mappings
             // rounds
             modelBuilder.Entity<Round>().HasKey(r => r.RoundId);
             modelBuilder.Entity<Round>().Property(r => r.RoundId).ValueGeneratedNever();
+            modelBuilder.Entity<Round>().Property(r => r.Points).IsRequired();
 
             modelBuilder.Entity<Round>()
                 .HasOne(r => r.Player)

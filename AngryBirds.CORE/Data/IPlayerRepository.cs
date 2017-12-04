@@ -8,11 +8,18 @@ namespace AngryBirds.CORE.Data
 {
     public interface IPlayerRepository
     {
-        Task<Player> Get(Guid id);
-        Task<Player> GetByName(string name);
-        Task<List<Player>> GetAll();
-        Task<Player> AddPlayer(Player player);
+        Task<Player> GetByIdAsync(Guid id);
+        Task<Player> GetByNameAsync(string name);
+        Task<List<Player>> GetAllPlayersAsync();
+        Task<Player> AddPlayerAsync(Player player);
+        Task<Player> UpdatePlayerAsync(Player playerToUpdate);
+        Task<List<Round>> GetAllRoundsAsync(Guid id);
+        Task<List<Round>> GetAllRoundsForMapAsync(Guid id);
 
-        Task<List<Round>> GetAllRounds(Guid id);
+        Task<Round> AddRoundAsync(Round round);
+
+        Task<List<Map>> GetAllMapsAsync();
+        Task<Map> GetMapByIdAsync(Guid id);
+        Task<Map> AddMapAsync(Map map);
     }
 }

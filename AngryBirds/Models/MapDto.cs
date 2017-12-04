@@ -10,5 +10,7 @@ namespace AngryBirds.API.Models
         public Guid MapId { get; set; }
         public string Name { get; set; }
         public int MaxMoves { get; set; }
+
+        //public ICollection<RoundForCreationDto> Rounds { get; set; }
     }
 }

@@ -4,28 +4,28 @@ using System.Linq;
 using System.Threading.Tasks;
 using AngryBirds.API.Models;
 using AngryBirds.CORE.Data;
-using AngryBirds.CORE.Models;
 using AutoMapper;
 using GraphQL.Types;
 
 namespace AngryBirds.API.Types
 {
-    public class PlayerType : ObjectGraphType<PlayerDto>
+    public class MapType : ObjectGraphType<MapDto>
     {
         private readonly IPlayerRepository _playerRepository;
 
-        public PlayerType(IPlayerRepository playerRepository)
+        public MapType(IPlayerRepository playerRepository)
         {
             _playerRepository = playerRepository;
 
-            Field(x => x.PlayerId, type: typeof(IdGraphType)).Description("The ID of the Player.");
-            Field(x => x.Name, nullable: false).Description("The name of the Player");
+            Field(x => x.MapId, type: typeof(IdGraphType)).Description("The ID of the Map.");
+            Field(x => x.Name, nullable: false).Description("The name of the Map");
+            Field(x => x.MaxMoves, nullable: false).Description("MaxMoves for Map");
             FieldAsync<ListGraphType<RoundType>>(
                 "rounds",
-                "Rounds played by player.",
+                "Rounds played on this map.",
                 resolve: async context =>
                 {
-                    var roundsFromRepo = await _playerRepository.GetAllRoundsAsync(context.Source.PlayerId);
+                    var roundsFromRepo = await _playerRepository.GetAllRoundsForMapAsync(context.Source.MapId);
                     var roundsToRetorn = Mapper.Map<IEnumerable<RoundDto>>(roundsFromRepo);
                     return roundsToRetorn;
                 });

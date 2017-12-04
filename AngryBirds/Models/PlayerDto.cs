@@ -11,6 +11,6 @@ namespace AngryBirds.API.Models
         public string Name { get; set; }
         //public int NumberOfRoundsPlayed { get; set; }
 
-        public ICollection<RoundForCreationDto> Rounds { get; set; }
+        //public ICollection<RoundForCreationDto> Rounds { get; set; }
     }
 }

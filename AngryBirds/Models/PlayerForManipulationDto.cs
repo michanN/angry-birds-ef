@@ -7,6 +7,7 @@ namespace AngryBirds.API.Models
 {
     public class PlayerForManipulationDto
     {
+        public Guid PlayerId { get; set; }
         public string Name { get; set; }
         public ICollection<RoundForCreationDto> Rounds { get; set; }
     }

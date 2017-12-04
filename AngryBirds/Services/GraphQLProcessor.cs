@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngryBirds.API.Models;
+using AngryBirds.API.Schemas;
 using GraphQL;
 using GraphQL.Http;
 using GraphQL.Types;

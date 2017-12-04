@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AngryBirds.API.Models;
 using GraphQL.Types;
 
 namespace AngryBirds.API.Types
 {
-    public class PlayerInputType : InputObjectGraphType
+    public class MapInputType : InputObjectGraphType
     {
-        public PlayerInputType()
+        public MapInputType()
         {
-            Name = "PlayerInput";
+            Name = "MapInput";
 
-            Field<IdGraphType>("playerId");
+            Field<IdGraphType>("mapId");
             Field<NonNullGraphType<StringGraphType>>("name");
+            Field<NonNullGraphType<IntGraphType>>("maxMoves");
         }
     }
 }

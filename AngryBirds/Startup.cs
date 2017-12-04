@@ -46,8 +46,10 @@ namespace AngryBirds.API
             services.AddScoped<IPlayerRepository, PlayerRepository>();
             services.AddScoped<IGraphQLProcessor, GraphQLProcessor>();
             services.AddTransient<PlayerType>();
-            services.AddTransient<RoundType>();
             services.AddTransient<PlayerInputType>();
+            services.AddTransient<RoundType>();
+            services.AddTransient<MapType>();
+            services.AddTransient<MapInputType>();
             services.AddTransient<AngryBirdsQuery>();
             services.AddTransient<AngryBirdsMutation>();
             services.AddTransient<ISchema>(
@@ -71,12 +73,15 @@ namespace AngryBirds.API
             {
                 cfg.CreateMap<Player, PlayerDto>();
                 cfg.CreateMap<PlayerForCreationDto, Player>().ReverseMap();
+                cfg.CreateMap<PlayerForManipulationDto, Player>().ReverseMap();
 
-                cfg.CreateMap<Map, MapDto>().ReverseMap();
+                cfg.CreateMap<Map, MapDto>();
                 cfg.CreateMap<MapForCreationDto, Map>().ReverseMap();
+                cfg.CreateMap<MapForManipulationDto, Map>().ReverseMap();
 
-                cfg.CreateMap<Round, RoundDto>().ReverseMap();
+                cfg.CreateMap<Round, RoundDto>();
                 cfg.CreateMap<RoundForCreationDto, Round>().ReverseMap();
+                cfg.CreateMap<RoundForManipulationDto, Round>().ReverseMap();
             });
 
             app.UseMvc();

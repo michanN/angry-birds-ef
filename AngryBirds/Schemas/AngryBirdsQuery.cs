@@ -3,6 +3,7 @@ using AngryBirds.API.Types;
 using AngryBirds.CORE.Data;
 using GraphQL.Types;
 using System;
+using System.Collections.Generic;
 using AutoMapper;
 
 namespace AngryBirds.API.Schemas
@@ -24,7 +25,7 @@ namespace AngryBirds.API.Schemas
                 resolve: async context =>
                 {
                     var id = context.GetArgument<Guid>("playerId");
-                    var playerForRepo = await _playerRepository.Get(id);
+                    var playerForRepo = await _playerRepository.GetByIdAsync(id);
                     var playerToReturn = Mapper.Map<PlayerDto>(playerForRepo);
                     return playerToReturn;
                 });
@@ -32,11 +33,11 @@ namespace AngryBirds.API.Schemas
             FieldAsync<PlayerType>(
                 "playerByName",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<StringGraphType>> {Name = "name"}),
+                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "name" }),
                 resolve: async context =>
                 {
                     var name = context.GetArgument<string>("name");
-                    var playerForRepo = await _playerRepository.GetByName(name);
+                    var playerForRepo = await _playerRepository.GetByNameAsync(name);
                     var playerToReturn = Mapper.Map<PlayerDto>(playerForRepo);
                     return playerToReturn;
 
@@ -46,7 +47,30 @@ namespace AngryBirds.API.Schemas
                 "players",
                 resolve: async context =>
                 {
-                    return await _playerRepository.GetAll();
+                    var playersFromRepo = await _playerRepository.GetAllPlayersAsync();
+                    var playersToReturn = Mapper.Map<IEnumerable<PlayerDto>>(playersFromRepo);
+                    return playersToReturn;
+                });
+
+            FieldAsync<MapType>(
+                "map",
+                arguments: new QueryArguments(
+                    new QueryArgument<StringGraphType>() { Name = "mapId" }),
+                resolve: async context =>
+                {
+                    var id = context.GetArgument<Guid>("mapId");
+                    var mapFromRepo = await _playerRepository.GetMapByIdAsync(id);
+                    var mapToRetun = Mapper.Map<MapDto>(mapFromRepo);
+                    return mapToRetun;
+                });
+
+            FieldAsync<ListGraphType<MapType>>(
+                "maps",
+                resolve: async context =>
+                {
+                    var mapsFromRepo = await _playerRepository.GetAllMapsAsync();
+                    var mapsToReturn = Mapper.Map<IEnumerable<MapDto>>(mapsFromRepo);
+                    return mapsToReturn;
                 });
         }
     }
