@@ -17,36 +17,36 @@ namespace AngryBirds.API.Schemas
 
             Name = "Query";
 
-            Field<PlayerType>(
+            FieldAsync<PlayerType>(
                 "player",
                 arguments: new QueryArguments(
                     new QueryArgument<StringGraphType>() { Name = "playerId" }),
-                resolve: context =>
+                resolve: async context =>
                 {
                     var id = context.GetArgument<Guid>("playerId");
-                    var playerForRepo = _playerRepository.Get(id).Result;
+                    var playerForRepo = await _playerRepository.Get(id);
                     var playerToReturn = Mapper.Map<PlayerDto>(playerForRepo);
                     return playerToReturn;
                 });
 
-            Field<PlayerType>(
+            FieldAsync<PlayerType>(
                 "playerByName",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<StringGraphType>> {Name = "name"}),
-                resolve: context =>
+                resolve: async context =>
                 {
                     var name = context.GetArgument<string>("name");
-                    var playerForRepo = _playerRepository.GetByName(name).Result;
+                    var playerForRepo = await _playerRepository.GetByName(name);
                     var playerToReturn = Mapper.Map<PlayerDto>(playerForRepo);
                     return playerToReturn;
 
-                }); 
+                });
 
-            Field<ListGraphType<PlayerType>>(
+            FieldAsync<ListGraphType<PlayerType>>(
                 "players",
-                resolve: context =>
+                resolve: async context =>
                 {
-                    return _playerRepository.GetAll();
+                    return await _playerRepository.GetAll();
                 });
         }
     }
