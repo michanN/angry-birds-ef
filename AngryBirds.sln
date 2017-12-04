@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngryBirds.API", "AngryBirds\AngryBirds.API.csproj", "{B7B8460E-D098-48B1-B498-CD1E45841C08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AngryBirds.API", "AngryBirds\AngryBirds.API.csproj", "{B7B8460E-D098-48B1-B498-CD1E45841C08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AngryBirds.DATA", "AngryBirds.DATA\AngryBirds.DATA.csproj", "{CAB8BA14-5286-4737-AE21-DE3F3DB893C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AngryBirds.DATA", "AngryBirds.DATA\AngryBirds.DATA.csproj", "{CAB8BA14-5286-4737-AE21-DE3F3DB893C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AngryBirds.CORE", "AngryBirds.CORE\AngryBirds.CORE.csproj", "{BA8FBD60-52C7-483E-95EA-372F64EF9677}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{CAB8BA14-5286-4737-AE21-DE3F3DB893C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAB8BA14-5286-4737-AE21-DE3F3DB893C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CAB8BA14-5286-4737-AE21-DE3F3DB893C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA8FBD60-52C7-483E-95EA-372F64EF9677}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA8FBD60-52C7-483E-95EA-372F64EF9677}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA8FBD60-52C7-483E-95EA-372F64EF9677}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA8FBD60-52C7-483E-95EA-372F64EF9677}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

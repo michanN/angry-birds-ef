@@ -11,8 +11,8 @@ using System;
 namespace AngryBirds.DATA.Migrations
 {
     [DbContext(typeof(AngryBirdContext))]
-    [Migration("20171201071404_Initial")]
-    partial class Initial
+    [Migration("20171203143224_PointsAddedToRoundsEntity")]
+    partial class PointsAddedToRoundsEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,44 +21,43 @@ namespace AngryBirds.DATA.Migrations
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("AngryBirds.DATA.Entities.Map", b =>
+            modelBuilder.Entity("AngryBirds.CORE.Models.Map", b =>
                 {
-                    b.Property<Guid>("MapId")
-                        .ValueGeneratedOnAdd();
+                    b.Property<Guid>("MapId");
 
                     b.Property<int>("MaxMoves");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100);
+                        .HasMaxLength(50);
 
                     b.HasKey("MapId");
 
                     b.ToTable("Map");
                 });
 
-            modelBuilder.Entity("AngryBirds.DATA.Entities.Player", b =>
+            modelBuilder.Entity("AngryBirds.CORE.Models.Player", b =>
                 {
-                    b.Property<Guid>("PlayerId")
-                        .ValueGeneratedOnAdd();
+                    b.Property<Guid>("PlayerId");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100);
+                        .HasMaxLength(50);
 
                     b.HasKey("PlayerId");
 
                     b.ToTable("Player");
                 });
 
-            modelBuilder.Entity("AngryBirds.DATA.Entities.Round", b =>
+            modelBuilder.Entity("AngryBirds.CORE.Models.Round", b =>
                 {
-                    b.Property<Guid>("RoundId")
-                        .ValueGeneratedOnAdd();
+                    b.Property<Guid>("RoundId");
 
                     b.Property<Guid>("MapId");
 
                     b.Property<Guid>("PlayerId");
+
+                    b.Property<int>("Points");
 
                     b.HasKey("RoundId");
 
@@ -69,17 +68,17 @@ namespace AngryBirds.DATA.Migrations
                     b.ToTable("Round");
                 });
 
-            modelBuilder.Entity("AngryBirds.DATA.Entities.Round", b =>
+            modelBuilder.Entity("AngryBirds.CORE.Models.Round", b =>
                 {
-                    b.HasOne("AngryBirds.DATA.Entities.Map", "Map")
+                    b.HasOne("AngryBirds.CORE.Models.Map", "Map")
                         .WithMany("Rounds")
                         .HasForeignKey("MapId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("AngryBirds.DATA.Entities.Player", "Player")
+                    b.HasOne("AngryBirds.CORE.Models.Player", "Player")
                         .WithMany("Rounds")
                         .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

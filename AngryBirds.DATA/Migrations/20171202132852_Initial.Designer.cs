@@ -11,9 +11,10 @@ using System;
 namespace AngryBirds.DATA.Migrations
 {
     [DbContext(typeof(AngryBirdContext))]
-    partial class AngryBirdContextModelSnapshot : ModelSnapshot
+    [Migration("20171202132852_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,8 +56,6 @@ namespace AngryBirds.DATA.Migrations
                     b.Property<Guid>("MapId");
 
                     b.Property<Guid>("PlayerId");
-
-                    b.Property<int>("Points");
 
                     b.HasKey("RoundId");
 

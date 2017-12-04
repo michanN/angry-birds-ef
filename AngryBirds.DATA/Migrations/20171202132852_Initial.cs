@@ -14,7 +14,7 @@ namespace AngryBirds.DATA.Migrations
                 {
                     MapId = table.Column<Guid>(nullable: false),
                     MaxMoves = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(maxLength: 100, nullable: false)
+                    Name = table.Column<string>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -26,7 +26,7 @@ namespace AngryBirds.DATA.Migrations
                 columns: table => new
                 {
                     PlayerId = table.Column<Guid>(nullable: false),
-                    Name = table.Column<string>(maxLength: 100, nullable: false)
+                    Name = table.Column<string>(maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -49,13 +49,13 @@ namespace AngryBirds.DATA.Migrations
                         column: x => x.MapId,
                         principalTable: "Map",
                         principalColumn: "MapId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Round_Player_PlayerId",
                         column: x => x.PlayerId,
                         principalTable: "Player",
                         principalColumn: "PlayerId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

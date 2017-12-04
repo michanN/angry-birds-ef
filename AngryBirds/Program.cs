@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using AngryBirds.DATA.Mappings;
 
-namespace AngryBirds
+namespace AngryBirds.API
 {
     public class Program
     {

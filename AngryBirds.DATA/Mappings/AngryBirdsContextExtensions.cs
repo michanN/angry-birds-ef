@@ -1,4 +1,4 @@
-﻿using AngryBirds.DATA.Entities;
+﻿using AngryBirds.CORE.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -65,25 +65,29 @@ namespace AngryBirds.DATA.Mappings
                 {
                     RoundId = new Guid("112F6B36-62EB-48E1-918D-F0D3DF2BB622"),
                     PlayerId = players[0].PlayerId,
-                    MapId = maps[0].MapId
+                    MapId = maps[0].MapId,
+                    Points = 1
                 },
                 new Round()
                 {
                     RoundId = new Guid("332F6B36-62EB-48E1-918D-F0D3DF2BB644"),
                     PlayerId = players[0].PlayerId,
-                    MapId = maps[1].MapId
+                    MapId = maps[1].MapId,
+                    Points = 2
                 },
                 new Round()
                 {
                     RoundId = new Guid("552F6B36-62EB-48E1-918D-F0D3DF2BB666"),
                     PlayerId = players[1].PlayerId,
-                    MapId = maps[2].MapId
+                    MapId = maps[2].MapId,
+                    Points = 4
                 },
                 new Round()
                 {
                     RoundId = new Guid("772F6B36-62EB-48E1-918D-F0D3DF2BB688"),
                     PlayerId = players[2].PlayerId,
-                    MapId = maps[1].MapId
+                    MapId = maps[1].MapId,
+                    Points = 8
                 },
             };
             context.Rounds.AddRange(rounds);
