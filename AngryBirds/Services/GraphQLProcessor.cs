@@ -14,18 +14,20 @@ namespace AngryBirds.API.Services
 {
     public class GraphQLProcessor : IGraphQLProcessor
     {
+        private readonly GraphQLQuery _graphQLQuery;
         private readonly ISchema _schema;
         private readonly IDocumentExecuter _executer;
         private readonly IDocumentWriter _writer;
 
-        public GraphQLProcessor(ISchema schema, IDocumentExecuter executer, IDocumentWriter writer)
+        public GraphQLProcessor(GraphQLQuery graphQlQuery, ISchema schema, IDocumentExecuter executer, IDocumentWriter writer)
         {
+            _graphQLQuery = graphQlQuery;
             _schema = schema;
             _executer = executer;
             _writer = writer;
         }
 
-        public async Task<string> ProcessAsync(GraphQLQuery query)
+        public async Task<string> ProcessAsync(GraphQLParameter query)
         {
             Inputs inputs = null;
             if (query.Variables != null)

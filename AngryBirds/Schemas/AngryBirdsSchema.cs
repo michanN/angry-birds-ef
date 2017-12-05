@@ -10,9 +10,9 @@ namespace AngryBirds.API.Schemas
     public class AngryBirdsSchema : Schema
     {
         public AngryBirdsSchema(IDependencyResolver resolver)
-            : base(resolver)
+            :base(resolver)
         {
-            Query = resolver.Resolve<AngryBirdsQuery>();
+            Query = resolver.Resolve<GraphQLQuery>();
             Mutation = resolver.Resolve<AngryBirdsMutation>();
         }
     }

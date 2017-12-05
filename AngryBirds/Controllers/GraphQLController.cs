@@ -16,7 +16,7 @@ namespace AngryBirds.Controllers
         }
 
         [HttpPost]
-        public async Task<object> PostAsync([FromBody]GraphQLQuery query)
+        public async Task<object> PostAsync([FromBody]GraphQLParameter query)
             => await _processor.ProcessAsync(query);
     }
 }

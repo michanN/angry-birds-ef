@@ -9,6 +9,6 @@ namespace AngryBirds.API.Services
 {
     public interface IGraphQLProcessor
     {
-        Task<string> ProcessAsync(GraphQLQuery query);
+        Task<string> ProcessAsync(GraphQLParameter query);
     }
 }

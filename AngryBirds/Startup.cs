@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AngryBirds.API.Models;
+using AngryBirds.API.Resolvers;
 using AngryBirds.API.Services;
 using AngryBirds.CORE.Data;
 using Microsoft.AspNetCore.Builder;
@@ -45,6 +46,8 @@ namespace AngryBirds.API
             services.AddSingleton<IDocumentWriter, DocumentWriter>();
             services.AddScoped<IPlayerRepository, PlayerRepository>();
             services.AddScoped<IGraphQLProcessor, GraphQLProcessor>();
+            services.AddScoped<IPlayersResolver, PlayersResolver>();
+            services.AddScoped<GraphQLQuery>();
             services.AddTransient<PlayerType>();
             services.AddTransient<PlayerInputType>();
             services.AddTransient<RoundType>();
@@ -52,8 +55,9 @@ namespace AngryBirds.API
             services.AddTransient<MapInputType>();
             services.AddTransient<AngryBirdsQuery>();
             services.AddTransient<AngryBirdsMutation>();
+            var sp = services.BuildServiceProvider();
             services.AddTransient<ISchema>(
-                s => new AngryBirdsSchema(new FuncDependencyResolver(type => (GraphType) s.GetService(type))));
+                s => new AngryBirdsSchema(new FuncDependencyResolver(type => (GraphType)s.GetService(type))));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
