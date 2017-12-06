@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using AngryBirds.CLIENT.Models;
 using Microsoft.AspNetCore.Rewrite.Internal.ApacheModRewrite;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -11,9 +15,14 @@ namespace AngryBirds.CLIENT
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var url = "http://localhost:51918/api/";
+            var app = new App(url);
+
+            app.LoginUser();
+
             Console.ReadLine();
-            Test();
+
+            //Test();
         }
 
         public static void Test()
@@ -21,18 +30,36 @@ namespace AngryBirds.CLIENT
             var url = "http://localhost:51918/api/";
             var graphQLClient = new GraphQLClient(url);
 
-            var query = @"
-                query { maps { maxMoves name rounds { playerId points } } }
+            var queryAllMaps = @"
+                query { maps { statusCode errorMessage data { mapId maxMoves name } } }
             ";
 
-            var obj = graphQLClient.Query(query, null).Get("maps");
+            var queryGetMap = @"
+                query($mapId: String!) { 
+                    map(mapId: $mapId) {
+                        statusCode
+                        errorMessage
+	                    data {
+	    	                mapId
+		                    name
+		                    maxMoves
+	                    }
+                    }
+                }
+            ";
 
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(url);
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            //var content = 
-            //HttpResponseMessage response = client.PostAsync(url, )
+            var obj = graphQLClient.Query(queryAllMaps, null).Get("maps");
 
+            IList<JToken> results = obj["data"];
+
+            Console.WriteLine(results);
+
+            IList<Map> maps = new List<Map>();
+            foreach (JToken result in results)
+            {
+                Map map = result.ToObject<Map>();
+                maps.Add(map);
+            }
         }
     }
 }
