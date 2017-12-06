@@ -6,6 +6,7 @@ using System.Text;
 using AngryBirds.CORE.Models;
 using System.Threading.Tasks;
 using AngryBirds.DATA.Mappings;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
 
 namespace AngryBirds.DATA.Repositories
@@ -30,6 +31,11 @@ namespace AngryBirds.DATA.Repositories
             return playterToReturn;
         }
 
+        public async Task<bool> CheckIfPlayerNameExists(string name)
+        {
+            return await _context.Players.AnyAsync(x => x.Name == name);
+        }
+
         public async Task<List<Player>> GetAllPlayersAsync()
         {
             return await _context.Players.ToListAsync();
@@ -37,6 +43,11 @@ namespace AngryBirds.DATA.Repositories
 
         public async Task<Player> AddPlayerAsync(Player player)
         {
+            //if (await _context.Players.AnyAsync(x => x.Name == player.Name))
+            //{
+            //    return await _context.Players.FirstOrDefaultAsync(x => x.Name == player.Name);
+            //}
+
             player.PlayerId = Guid.NewGuid();
             await _context.Players.AddAsync(player);
             await _context.SaveChangesAsync();
@@ -52,7 +63,7 @@ namespace AngryBirds.DATA.Repositories
             return playerToUpdate;
         }
 
-        public async Task<List<Round>> GetAllRoundsAsync(Guid id)
+        public async Task<List<Round>> GetAllRoundsForPlayerAsync(Guid id)
         {
             return await _context.Rounds.Where(x => x.PlayerId == id).ToListAsync();
         }
@@ -60,6 +71,16 @@ namespace AngryBirds.DATA.Repositories
         public async Task<List<Round>> GetAllRoundsForMapAsync(Guid id)
         {
             return await _context.Rounds.Where(x => x.MapId == id).ToListAsync();
+        }
+
+        public async Task<Round> GetRoundById(Guid id)
+        {
+            return await _context.Rounds.SingleOrDefaultAsync(x => x.RoundId == id);
+        }
+
+        public async Task<List<Round>> GetAllRoundsAsync()
+        {
+            return await _context.Rounds.ToListAsync();
         }
 
         public async Task<Round> AddRoundAsync(Round round)
@@ -86,6 +107,14 @@ namespace AngryBirds.DATA.Repositories
             await _context.Maps.AddAsync(map);
             await _context.SaveChangesAsync();
             return map;
+        }
+
+        public async Task<Map> UpdateMapAsync(Map mapToUpdate)
+        {
+            _context.Maps.Attach(mapToUpdate);
+            _context.Entry(mapToUpdate).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return mapToUpdate;
         }
     }
 }

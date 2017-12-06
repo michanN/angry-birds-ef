@@ -47,15 +47,17 @@ namespace AngryBirds.API
             services.AddScoped<IPlayerRepository, PlayerRepository>();
             services.AddScoped<IGraphQLProcessor, GraphQLProcessor>();
             services.AddScoped<IPlayersResolver, PlayersResolver>();
+            services.AddScoped<IMapsResolver, MapsResolver>();
+            services.AddScoped<IRoundResolver, RoundResolver>();
             services.AddScoped<GraphQLQuery>();
+            services.AddScoped(typeof(ResponseGraphType<>));
+            services.AddScoped(typeof(ResponseListGraphType<>));
             services.AddTransient<PlayerType>();
             services.AddTransient<PlayerInputType>();
             services.AddTransient<RoundType>();
+            services.AddTransient<RoundInputType>();
             services.AddTransient<MapType>();
             services.AddTransient<MapInputType>();
-            services.AddTransient<AngryBirdsQuery>();
-            services.AddTransient<AngryBirdsMutation>();
-            var sp = services.BuildServiceProvider();
             services.AddTransient<ISchema>(
                 s => new AngryBirdsSchema(new FuncDependencyResolver(type => (GraphType)s.GetService(type))));
         }

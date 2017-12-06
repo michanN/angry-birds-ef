@@ -9,7 +9,7 @@ using GraphQL.Types;
 
 namespace AngryBirds.API.Types
 {
-    public class MapType : ObjectGraphType<MapDto>
+    public class MapType : ObjectGraphType<MapDto>, IGraphType
     {
         private readonly IPlayerRepository _playerRepository;
 

@@ -10,7 +10,7 @@ using GraphQL.Types;
 
 namespace AngryBirds.API.Types
 {
-    public class PlayerType : ObjectGraphType<PlayerDto>
+    public class PlayerType : ObjectGraphType<PlayerDto>, IGraphType
     {
         private readonly IPlayerRepository _playerRepository;
 
@@ -25,7 +25,7 @@ namespace AngryBirds.API.Types
                 "Rounds played by player.",
                 resolve: async context =>
                 {
-                    var roundsFromRepo = await _playerRepository.GetAllRoundsAsync(context.Source.PlayerId);
+                    var roundsFromRepo = await _playerRepository.GetAllRoundsForPlayerAsync(context.Source.PlayerId);
                     var roundsToRetorn = Mapper.Map<IEnumerable<RoundDto>>(roundsFromRepo);
                     return roundsToRetorn;
                 });

@@ -13,7 +13,7 @@ namespace AngryBirds.API.Schemas
             :base(resolver)
         {
             Query = resolver.Resolve<GraphQLQuery>();
-            Mutation = resolver.Resolve<AngryBirdsMutation>();
+            Mutation = resolver.Resolve<GraphQLQuery>();
         }
     }
 }

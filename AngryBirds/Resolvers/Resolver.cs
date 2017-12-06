@@ -24,10 +24,10 @@ namespace AngryBirds.API.Resolvers
         //    return new Response(error.StatusCode, error.ErrorMessage);
         //}
 
-        //public Response NotFoundError(string id)
-        //{
-        //    var error = new NotFoundError(id);
-        //    return new Response(error.StatusCode, error.ErrorMessage);
-        //}
+        public Response NotFoundError(string id)
+        {
+            var error = new NotFoundError(id);
+            return new Response(error.StatusCode, error.ErrorMessage);
+        }
     }
 }

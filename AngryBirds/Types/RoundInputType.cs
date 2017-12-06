@@ -14,7 +14,7 @@ namespace AngryBirds.API.Types
 
             Field<IdGraphType>("playerId");
             Field<IdGraphType>("mapId");
-            Field<StringGraphType>("points");
+            Field<IntGraphType>("points");
         }
     }
 }

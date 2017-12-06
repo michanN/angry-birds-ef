@@ -8,7 +8,7 @@ using GraphQL.Types;
 
 namespace AngryBirds.API.Types
 {
-    public class RoundType : ObjectGraphType<RoundDto>
+    public class RoundType : ObjectGraphType<RoundDto>, IGraphType
     {
         public RoundType()
         {
