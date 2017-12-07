@@ -19,6 +19,9 @@ namespace AngryBirds.CLIENT
             var app = new App(url);
 
             app.LoginUser();
+            //app.CreateMap("Pontus rum", 11); FUNKAR
+            //app.GetRound(Guid.Parse("332F6B36-62EB-48E1-918D-F0D3DF2BB644")); FUNKAr
+            //app.CreateRound(Guid.Parse("0bfe3dc5-47f3-4fec-8bb0-a1c22ddb5b96"), Guid.Parse("2d9b3b44-fcc5-47df-99e8-7771c25ab9a1"), 7);
 
             Console.ReadLine();
 

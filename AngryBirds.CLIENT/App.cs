@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using AngryBirds.CLIENT.Models;
 using Newtonsoft.Json.Linq;
 
@@ -34,11 +35,11 @@ namespace AngryBirds.CLIENT
             RunQueriesAtStartUp();
         }
 
-        private void RunQueriesAtStartUp()
+        private async void RunQueriesAtStartUp()
         {
-            GetAllPlayers();
-            GetAllMaps();
-            GetAllRounds();
+            await GetAllPlayers();
+            //GetAllMaps();
+            //GetAllRounds();
         }
 
         private void CreateQueries()
@@ -55,8 +56,17 @@ namespace AngryBirds.CLIENT
             var getAllMaps = @"query { maps { statusCode errorMessage data { mapId maxMoves name rounds { roundId playerId mapId points }}}}";
             Queries.Add("getAllMaps", getAllMaps);
 
+            var createMap = @"mutation($map: MapInput!) { createMap(map: $map) { statusCode errorMessage data { mapId name maxMoves rounds { roundId playerId mapId points } } } }";
+            Queries.Add("createMap", createMap);
+
+            var getRoundById = @"query($roundId: String!) { round(roundId: $roundId) { statusCode errorMessage data { roundId playerId mapId points } } }";
+            Queries.Add("getRoundById", getRoundById);
+
             var getAllRounds = @"query { rounds { statusCode errorMessage data { roundId playerId mapId points } } }";
             Queries.Add("getAllRounds", getAllRounds);
+
+            var createRound = @"mutation($round: RoundInput!) { createRound(round: $round) { statusCode errorMessage data { roundId playerId mapId points } } }";
+            Queries.Add("createRound", createRound);
 
         }
 
@@ -66,20 +76,22 @@ namespace AngryBirds.CLIENT
 
             if (Players.Any(x => x.Name == playerName))
             {
-                jsonObj = _graphQlClient.Query(Queries["getPlayerByName"], new {name = playerName}).Get("playerByName");
+                jsonObj = _graphQlClient
+                    .Query(Queries["getPlayerByName"], new {name = playerName}).Get("playerByName");
             }
             else
             {
-                jsonObj = _graphQlClient.Query(Queries["createPlayer"], new { player = new { name = playerName } }).Get("createPlayer");
+                jsonObj = _graphQlClient
+                    .Query(Queries["createPlayer"], new { player = new { name = playerName } }).Get("createPlayer");
             }
 
             var player = ParseJsonToObject<Player>(jsonObj);
             ActiveUser = player;
         }
 
-        public void GetAllPlayers()
+        public async Task GetAllPlayers()
         {
-            var jsonObj = _graphQlClient.Query(Queries["getAllPlayers"], null).Get("players");
+            var jsonObj = await _graphQlClient.Query(Queries["getAllPlayers"], null).Get("players");
             var players = ParseJsonToObjects<Player>(jsonObj);
             Players = players;
         }
@@ -89,6 +101,34 @@ namespace AngryBirds.CLIENT
             var jsonObj = _graphQlClient.Query(Queries["getAllMaps"], null).Get("maps");
             var maps = ParseJsonToObjects<Map>(jsonObj);
             Maps = maps;
+        }
+
+        public void CreateMap(string mapName, int number)
+        {
+            var jsonObj = _graphQlClient
+                .Query(Queries["createMap"], new {map = new {name = mapName, maxMoves = number}}).Get("createMap");
+            var map = ParseJsonToObject<Map>(jsonObj);
+            if (map != null)
+            {
+                GetAllMaps();
+            }
+        }
+
+        public void GetRound(Guid id)
+        {
+            var jsonObj = _graphQlClient.Query(Queries["getRoundById"], new {roundId = id}).Get("round");
+            var round = ParseJsonToObject<Round>(jsonObj);
+        }
+
+        public void CreateRound(Guid pId, Guid mId, int number)
+        {
+            var jsonObj = _graphQlClient.Query(Queries["createRound"],
+                new {round = new {playerId = pId, mapId = mId, points = number}}).Get("createRound");
+            var round = ParseJsonToObject<Round>(jsonObj);
+            if (round != null)
+            {
+                GetAllRounds();
+            }
         }
 
         public void GetAllRounds()
