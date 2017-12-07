@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using AngryBirds.CLIENT.Models;
@@ -48,12 +49,32 @@ namespace AngryBirds.CLIENT
             var getAllPlayers = @"query { players { statusCode errorMessage data { playerId name rounds { roundId playerId mapId points }}}}";
             Queries.Add("getAllPlayers", getAllPlayers);
 
+            var createPlayer = @"mutation($player: PlayerInput!) { createPlayer(player: $player) { statusCode errorMessage data { playerId name rounds { roundId playerId mapId points } } } }";
+            Queries.Add("createPlayer", createPlayer);
+
             var getAllMaps = @"query { maps { statusCode errorMessage data { mapId maxMoves name rounds { roundId playerId mapId points }}}}";
             Queries.Add("getAllMaps", getAllMaps);
 
             var getAllRounds = @"query { rounds { statusCode errorMessage data { roundId playerId mapId points } } }";
             Queries.Add("getAllRounds", getAllRounds);
 
+        }
+
+        public void GetPlayer(string playerName)
+        {
+            dynamic jsonObj;
+
+            if (Players.Any(x => x.Name == playerName))
+            {
+                jsonObj = _graphQlClient.Query(Queries["getPlayerByName"], new {name = playerName}).Get("playerByName");
+            }
+            else
+            {
+                jsonObj = _graphQlClient.Query(Queries["createPlayer"], new { player = new { name = playerName } }).Get("createPlayer");
+            }
+
+            var player = ParseJsonToObject<Player>(jsonObj);
+            ActiveUser = player;
         }
 
         public void GetAllPlayers()
@@ -77,6 +98,14 @@ namespace AngryBirds.CLIENT
             Rounds = rounds;
         }
 
+        public void LoginUser()
+        {
+            Console.WriteLine("Enter your name: ");
+            var input = Console.ReadLine();
+
+            GetPlayer(input);
+        }
+
         private IList<T> ParseJsonToObjects<T>(dynamic obj)
         {
             IList<JToken> results = obj["data"];
@@ -91,13 +120,13 @@ namespace AngryBirds.CLIENT
             return objects;
         }
 
-
-
-        public void LoginUser()
+        private T ParseJsonToObject<T>(dynamic obj)
         {
-            Console.WriteLine("Enter your name: ");
-            var input = Console.ReadLine();
+            JToken result = obj["data"];
 
+            T appObj = result.ToObject<T>();
+
+            return appObj;
         }
     }
 
