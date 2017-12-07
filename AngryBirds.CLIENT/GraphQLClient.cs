@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -17,7 +19,7 @@ namespace AngryBirds.CLIENT
             this.url = url;
         }
 
-        public dynamic Query(string query, object variables)
+        public async Task<dynamic> Query(string query, object variables)
         {
             var fullQuery = new GraphQLQuery()
             {
@@ -36,20 +38,20 @@ namespace AngryBirds.CLIENT
             request.ContentLength = byteArray.Length;
             request.ContentType = @"application/json";
 
-            using (Stream dataStream = request.GetRequestStream())
+            using (Stream dataStream = await request.GetRequestStreamAsync())
             {
                 dataStream.Write(byteArray, 0, byteArray.Length);
             }
             long length = 0;
             try
             {
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())
                 {
                     length = response.ContentLength;
                     using (Stream responseStream = response.GetResponseStream())
                     {
                         StreamReader reader = new StreamReader(responseStream, Encoding.UTF8);
-                        var json = reader.ReadToEnd();
+                        var json = await reader.ReadToEndAsync();
                         return new GraphQLQueryResult(json);
                     }
                 }
@@ -60,7 +62,7 @@ namespace AngryBirds.CLIENT
                 using (Stream responseStream = errorResponse.GetResponseStream())
                 {
                     StreamReader reader = new StreamReader(responseStream, Encoding.GetEncoding("utf-8"));
-                    String errorText = reader.ReadToEnd();
+                    String errorText = await reader.ReadToEndAsync();
                     Console.WriteLine(errorText);
                     return new GraphQLQueryResult(null, ex);
                 }

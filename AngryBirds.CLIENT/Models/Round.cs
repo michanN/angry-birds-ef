@@ -11,5 +11,7 @@ namespace AngryBirds.CLIENT.Models
         public Guid MapId { get; set; }
 
         public int Points { get; set; }
+        public Player Player { get; set; }
+        public Map Map { get; set; }
     }
 }

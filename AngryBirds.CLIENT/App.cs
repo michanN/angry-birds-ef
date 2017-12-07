@@ -29,17 +29,17 @@ namespace AngryBirds.CLIENT
             InitializeApp();
         }
 
-        private void InitializeApp()
+        private async void InitializeApp()
         {
             CreateQueries();
-            RunQueriesAtStartUp();
+            await RunQueriesAtStartUp();
         }
 
-        private async void RunQueriesAtStartUp()
+        private async Task RunQueriesAtStartUp()
         {
             await GetAllPlayers();
-            //GetAllMaps();
-            //GetAllRounds();
+            await GetAllMaps();
+            await GetAllRounds();
         }
 
         private void CreateQueries()
@@ -70,80 +70,107 @@ namespace AngryBirds.CLIENT
 
         }
 
-        public void GetPlayer(string playerName)
+        public async Task GetPlayer(string playerName)
         {
             dynamic jsonObj;
 
             if (Players.Any(x => x.Name == playerName))
             {
-                jsonObj = _graphQlClient
-                    .Query(Queries["getPlayerByName"], new {name = playerName}).Get("playerByName");
+                dynamic jsonQuery = await _graphQlClient.Query(Queries["getPlayerByName"], new {name = playerName});
+                jsonObj = jsonQuery.Get("playerByName");
             }
             else
             {
-                jsonObj = _graphQlClient
-                    .Query(Queries["createPlayer"], new { player = new { name = playerName } }).Get("createPlayer");
+                dynamic jsonQuery = await _graphQlClient.Query(Queries["createPlayer"], new {player = new {name = playerName}});
+                jsonObj = jsonQuery.Get("createPlayer");
             }
 
             var player = ParseJsonToObject<Player>(jsonObj);
             ActiveUser = player;
+            Console.WriteLine($"{ActiveUser.Name}");
         }
 
         public async Task GetAllPlayers()
         {
-            var jsonObj = await _graphQlClient.Query(Queries["getAllPlayers"], null).Get("players");
-            var players = ParseJsonToObjects<Player>(jsonObj);
+            var jsonObj = await _graphQlClient.Query(Queries["getAllPlayers"], null);
+            var getPlayers = jsonObj.Get("players");
+            var players = ParseJsonToObjects<Player>(getPlayers);
             Players = players;
+            Console.WriteLine("All Players Added");
         }
 
-        public void GetAllMaps()
+        public async Task GetAllMaps()
         {
-            var jsonObj = _graphQlClient.Query(Queries["getAllMaps"], null).Get("maps");
-            var maps = ParseJsonToObjects<Map>(jsonObj);
+            var jsonObj = await _graphQlClient.Query(Queries["getAllMaps"], null);
+            var getMaps = jsonObj.Get("maps");
+            var maps = ParseJsonToObjects<Map>(getMaps);
             Maps = maps;
+            Console.WriteLine("All Maps Added");
         }
 
-        public void CreateMap(string mapName, int number)
+        public async Task CreateMap(string mapName, int number)
         {
-            var jsonObj = _graphQlClient
-                .Query(Queries["createMap"], new {map = new {name = mapName, maxMoves = number}}).Get("createMap");
-            var map = ParseJsonToObject<Map>(jsonObj);
+            var jsonObj = await _graphQlClient
+                .Query(Queries["createMap"], new {map = new {name = mapName, maxMoves = number}});
+            var getMap = jsonObj.Get("createMap");
+
+            var map = ParseJsonToObject<Map>(getMap);
+            Console.WriteLine("Map Added");
             if (map != null)
             {
-                GetAllMaps();
+                await GetAllMaps();
             }
         }
 
-        public void GetRound(Guid id)
+        public async Task GetRound(Guid id)
         {
-            var jsonObj = _graphQlClient.Query(Queries["getRoundById"], new {roundId = id}).Get("round");
-            var round = ParseJsonToObject<Round>(jsonObj);
+            var jsonObj = await _graphQlClient.Query(Queries["getRoundById"], new {roundId = id});
+            var getRound = jsonObj.Get("round");
+            var round = ParseJsonToObject<Round>(getRound);
+            Console.WriteLine("Round fetched");
         }
 
-        public void CreateRound(Guid pId, Guid mId, int number)
+        public async Task CreateRound(Guid pId, Guid mId, int number)
         {
-            var jsonObj = _graphQlClient.Query(Queries["createRound"],
-                new {round = new {playerId = pId, mapId = mId, points = number}}).Get("createRound");
-            var round = ParseJsonToObject<Round>(jsonObj);
+            var jsonObj = await _graphQlClient.Query(Queries["createRound"],
+                new {round = new {playerId = pId, mapId = mId, points = number}});
+            var getRound = jsonObj.Get("createRound");
+            var round = ParseJsonToObject<Round>(getRound);
+            Console.WriteLine("Round Added");
             if (round != null)
             {
-                GetAllRounds();
+                await GetAllRounds();
             }
         }
 
-        public void GetAllRounds()
+        public async Task GetAllRounds()
         {
-            var jsonObj = _graphQlClient.Query(Queries["getAllRounds"], null).Get("rounds");
-            var rounds = ParseJsonToObjects<Round>(jsonObj);
+            var jsonObj = await _graphQlClient.Query(Queries["getAllRounds"], null);
+            var getRounds = jsonObj.Get("rounds");
+            var rounds = ParseJsonToObjects<Round>(getRounds);
             Rounds = rounds;
+            Console.WriteLine("All Rounds added");
         }
 
-        public void LoginUser()
+        public async Task LoginUser()
         {
             Console.WriteLine("Enter your name: ");
             var input = Console.ReadLine();
 
-            GetPlayer(input);
+            await GetPlayer(input);
+        }
+
+        public void WriteUserRounds(Player player)
+        {
+            foreach (var round in Rounds)
+            {
+                if (round.PlayerId == player.PlayerId)
+                {
+                    Console.WriteLine(round.Map.Name);
+                    Console.WriteLine();
+                }
+            }
+            Console.ReadLine();
         }
 
         private IList<T> ParseJsonToObjects<T>(dynamic obj)
@@ -168,17 +195,68 @@ namespace AngryBirds.CLIENT
 
             return appObj;
         }
+
+        public async Task StartApp()
+        {
+            var exit = false;
+            while (!exit)
+            {
+                ShowMenu();
+
+                var validCommands = new string[] {"1", "2", "3", "4", "q"};
+
+                var userInput = Console.ReadLine().ToLower();
+                if (validCommands.Contains(userInput))
+                {
+                    switch (userInput)
+                    {
+                        case "1":
+                            await LoginUser();
+                            WriteUserRounds(ActiveUser);
+                            break;
+                        case "2":
+                            break;
+                        case "3":
+                            break;
+                        case "4":
+                            break;
+                        case "q":
+                            exit = true;
+                            break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid command. Press ENTER to try again");
+                    Console.ReadLine();
+                    Console.Clear();
+                }
+            }
+        }
+
+        public void ShowMenu()
+        {
+            Console.WriteLine("Welcome to AngryBirds v.0.0.1");
+            Console.WriteLine("Menu:");
+            Console.WriteLine("[1]. Sign In");
+            Console.WriteLine("[2]. Show Maps");
+            Console.WriteLine("[3]. Add Map");
+            Console.WriteLine("[4]. Play Round");
+            Console.WriteLine("");
+            Console.WriteLine("[Q]uit");
+            Console.WriteLine("");
+        }
     }
 
     //1. Programmet ska skriva ut innehållet i tabellerna.
-        //1.1 När poängen på en bana visas så ska programmet dessutom visa vilken spelare som har den bästa poängen på banan (Exempel: "Bana 1: 3 drag (0 kvar) >> David: 1 drag")
+    //    1.1 När poängen på en bana visas så ska programmet dessutom visa vilken spelare som har den bästa poängen på banan(Exempel: "Bana 1: 3 drag (0 kvar) >> David: 1 drag")
     //2. Spelaren ska kunna skriva in sitt namn
-        //2.1 Programmet ska känna igen om namnet finns i databasen
-        //2.1.1 Om namnet finns ska programmet skriva ut en lista på alla banor som spelaren klarat, hur många drag på varje bana, hur många drag som spelaren inte behövde använda och hur många drag spelaren förbrukat på alla banor sammanlagt.
-            //Exempel: "Bana 1: 2 drag (1 kvar) \n Bana 2: 3 drag (0 kvar) \n 5 drag totalt."
-        //2.2 Om namnet inte finns ska det läggas till i databasen.
+    //    2.1 Programmet ska känna igen om namnet finns i databasen
+    //    2.1.1 Om namnet finns ska programmet skriva ut en lista på alla banor som spelaren klarat, hur många drag på varje bana, hur många drag som spelaren inte behövde använda och hur många drag spelaren förbrukat på alla banor sammanlagt.
+    //        Exempel: "Bana 1: 2 drag (1 kvar) \n Bana 2: 3 drag (0 kvar) \n 5 drag totalt."
+    //    2.2 Om namnet inte finns ska det läggas till i databasen.
     //3. Spelaren ska kunna uppdatera sin poäng på någon bana.
-        //3.1 Om spelaren vill det ska programmet fråga efter banans id-nummer och den nya poängen, och uppdatera databasen.
+    //    3.1 Om spelaren vill det ska programmet fråga efter banans id-nummer och den nya poängen, och uppdatera databasen.
     //4. Spelaren ska kunna lägga till en bana.
 
 }

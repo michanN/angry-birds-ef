@@ -80,7 +80,7 @@ namespace AngryBirds.DATA.Repositories
 
         public async Task<List<Round>> GetAllRoundsAsync()
         {
-            return await _context.Rounds.ToListAsync();
+            return await _context.Rounds.Include(r => r.Map).Include(r => r.Player).ToListAsync();
         }
 
         public async Task<Round> AddRoundAsync(Round round)
