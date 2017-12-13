@@ -28,7 +28,7 @@ namespace AngryBirds.CLIENT
             };
             string jsonContent = JsonConvert.SerializeObject(fullQuery);
 
-            Console.WriteLine(jsonContent);
+            //Console.WriteLine(jsonContent);
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "POST";
 
@@ -63,7 +63,7 @@ namespace AngryBirds.CLIENT
                 {
                     StreamReader reader = new StreamReader(responseStream, Encoding.GetEncoding("utf-8"));
                     String errorText = await reader.ReadToEndAsync();
-                    Console.WriteLine(errorText);
+                    //Console.WriteLine(errorText);
                     return new GraphQLQueryResult(null, ex);
                 }
             }

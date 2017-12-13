@@ -43,11 +43,6 @@ namespace AngryBirds.DATA.Repositories
 
         public async Task<Player> AddPlayerAsync(Player player)
         {
-            //if (await _context.Players.AnyAsync(x => x.Name == player.Name))
-            //{
-            //    return await _context.Players.FirstOrDefaultAsync(x => x.Name == player.Name);
-            //}
-
             player.PlayerId = Guid.NewGuid();
             await _context.Players.AddAsync(player);
             await _context.SaveChangesAsync();

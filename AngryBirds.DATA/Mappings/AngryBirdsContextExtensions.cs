@@ -89,6 +89,13 @@ namespace AngryBirds.DATA.Mappings
                     MapId = maps[1].MapId,
                     Points = 8
                 },
+                new Round()
+                {
+                    RoundId = new Guid("232F6B36-62EB-48E1-918D-F0D3DF2BB699"),
+                    PlayerId = players[1].PlayerId,
+                    MapId = maps[1].MapId,
+                    Points = 1
+                },
             };
             context.Rounds.AddRange(rounds);
             context.SaveChanges();

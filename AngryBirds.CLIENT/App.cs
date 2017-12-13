@@ -62,7 +62,7 @@ namespace AngryBirds.CLIENT
             var getRoundById = @"query($roundId: String!) { round(roundId: $roundId) { statusCode errorMessage data { roundId playerId mapId points } } }";
             Queries.Add("getRoundById", getRoundById);
 
-            var getAllRounds = @"query { rounds { statusCode errorMessage data { roundId playerId mapId points } } }";
+            var getAllRounds = @"query { rounds { statusCode errorMessage data { roundId playerId mapId points player { playerId name } map { mapId name maxMoves } }} }";
             Queries.Add("getAllRounds", getAllRounds);
 
             var createRound = @"mutation($round: RoundInput!) { createRound(round: $round) { statusCode errorMessage data { roundId playerId mapId points } } }";
@@ -96,7 +96,6 @@ namespace AngryBirds.CLIENT
             var getPlayers = jsonObj.Get("players");
             var players = ParseJsonToObjects<Player>(getPlayers);
             Players = players;
-            Console.WriteLine("All Players Added");
         }
 
         public async Task GetAllMaps()
@@ -105,7 +104,6 @@ namespace AngryBirds.CLIENT
             var getMaps = jsonObj.Get("maps");
             var maps = ParseJsonToObjects<Map>(getMaps);
             Maps = maps;
-            Console.WriteLine("All Maps Added");
         }
 
         public async Task CreateMap(string mapName, int number)
@@ -115,7 +113,6 @@ namespace AngryBirds.CLIENT
             var getMap = jsonObj.Get("createMap");
 
             var map = ParseJsonToObject<Map>(getMap);
-            Console.WriteLine("Map Added");
             if (map != null)
             {
                 await GetAllMaps();
@@ -149,7 +146,6 @@ namespace AngryBirds.CLIENT
             var getRounds = jsonObj.Get("rounds");
             var rounds = ParseJsonToObjects<Round>(getRounds);
             Rounds = rounds;
-            Console.WriteLine("All Rounds added");
         }
 
         public async Task LoginUser()
@@ -162,14 +158,18 @@ namespace AngryBirds.CLIENT
 
         public void WriteUserRounds(Player player)
         {
+            Console.Clear();
             foreach (var round in Rounds)
             {
                 if (round.PlayerId == player.PlayerId)
                 {
-                    Console.WriteLine(round.Map.Name);
-                    Console.WriteLine();
+                    var highest = Rounds.Where(r => r.MapId == round.MapId).OrderBy(r => r.Points).Take(1);
+                    Console.WriteLine($"Bana: {round.Map.Name} Använda Drag: {round.Points} Drag Kvar: {round.Map.MaxMoves - round.Points} HighScore {highest.First().Player.Name}: {highest.First().Points}");
                 }
             }
+            var totalscore = Rounds.Where(r => r.PlayerId == player.PlayerId).Sum(r => r.Points);
+            Console.WriteLine($"Total antal moves: {totalscore}");
+
             Console.ReadLine();
         }
 
@@ -201,9 +201,10 @@ namespace AngryBirds.CLIENT
             var exit = false;
             while (!exit)
             {
+                Console.Clear();
                 ShowMenu();
 
-                var validCommands = new string[] {"1", "2", "3", "4", "q"};
+                var validCommands = new string[] {"1", "2", "3", "4", "5", "q"};
 
                 var userInput = Console.ReadLine().ToLower();
                 if (validCommands.Contains(userInput))
@@ -215,10 +216,16 @@ namespace AngryBirds.CLIENT
                             WriteUserRounds(ActiveUser);
                             break;
                         case "2":
+                            ShowAllMaps();
                             break;
                         case "3":
+                            await MapCreation();
                             break;
                         case "4":
+                            await PlayRound();
+                            break;
+                        case "5":
+                            ListRounds();
                             break;
                         case "q":
                             exit = true;
@@ -234,6 +241,53 @@ namespace AngryBirds.CLIENT
             }
         }
 
+        public void ListRounds()
+        {
+            foreach (var round in Rounds)
+            {
+                Console.WriteLine($"{round.Player.Name} {round.Map.Name} {round.Points}");
+            }
+            Console.ReadLine();
+        }
+
+        public async Task PlayRound()
+        {
+            Console.Clear();
+            Console.WriteLine("Please enter the GUID for the map:");
+            var mapId = Console.ReadLine();
+            Guid mapIdAsGuid = Guid.Parse(mapId);
+
+            Console.WriteLine("Please enter your points: ");
+            var points = Console.ReadLine();
+            int pointsAsInt = Int32.Parse(points);
+
+            await CreateRound(ActiveUser.PlayerId, mapIdAsGuid, pointsAsInt);
+        }
+
+        public async Task MapCreation()
+        {
+            Console.Clear();
+            Console.WriteLine("Please enter a name for the map:");
+            var mapName = Console.ReadLine();
+
+            Console.WriteLine("Please enter number of max moves: ");
+            var moves = Console.ReadLine();
+            int movesAsInt = Int32.Parse(moves);
+
+            await CreateMap(mapName, movesAsInt);
+        }
+
+        public void ShowAllMaps()
+        {
+            Console.Clear();
+            foreach (var map in Maps)
+            {
+                Console.WriteLine($"Name: {map.Name} Max Moves: {map.MaxMoves}");
+            }
+
+            Console.ReadLine();
+        }
+
         public void ShowMenu()
         {
             Console.WriteLine("Welcome to AngryBirds v.0.0.1");
@@ -241,7 +295,11 @@ namespace AngryBirds.CLIENT
             Console.WriteLine("[1]. Sign In");
             Console.WriteLine("[2]. Show Maps");
             Console.WriteLine("[3]. Add Map");
-            Console.WriteLine("[4]. Play Round");
+            if (ActiveUser != null)
+            {
+                Console.WriteLine("[4]. Play Round");
+            }
+            Console.WriteLine("[5]. List All Rounds");
             Console.WriteLine("");
             Console.WriteLine("[Q]uit");
             Console.WriteLine("");
